@@ -1,0 +1,54 @@
+@font-face {
+  font-family: "NanumSquareNeo";
+  font-weight: 100;
+  font-style: normal;
+  src: local("NanumSquareNeoTTF aLt"),
+  url("../fonts/NanumSquareNeoTTF-aLt.woff2") format("woff2"),
+  url("../fonts/NanumSquareNeoTTF-aLt.woff") format("woff"),
+  url("../fonts/NanumSquareNeoTTF-aLt.eot") format("opentype"),
+  url("../fonts/NanumSquareNeoTTF-aLt.otf") format("truetype");
+}
+
+@font-face {
+  font-family: "NanumSquareNeo";
+  font-weight: 300;
+  font-style: normal;
+  src: local("NanumSquareNeoTTF bRg"),
+  url("../fonts/NanumSquareNeoTTF-bRg.woff2") format("woff2"),
+  url("../fonts/NanumSquareNeoTTF-bRg.woff") format("woff"),
+  url("../fonts/NanumSquareNeoTTF-bRg.eot") format("opentype"),
+  url("../fonts/NanumSquareNeoTTF-bRg.otf") format("truetype");
+}
+
+@font-face {
+  font-family: "NanumSquareNeo";
+  font-weight: 500;
+  font-style: normal;
+  src: local("NanumSquareNeoTTF cBd"),
+  url("../fonts/NanumSquareNeoTTF-cBd.woff2") format("woff2"),
+  url("../fonts/NanumSquareNeoTTF-cBd.woff") format("woff"),
+  url("../fonts/NanumSquareNeoTTF-cBd.eot") format("opentype"),
+  url("../fonts/NanumSquareNeoTTF-cBd.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "NanumSquareNeo";
+  font-weight: 700;
+  font-style: normal;
+  src: local("NanumSquareNeoTTF dEb"),
+  url("../fonts/NanumSquareNeoTTF-dEb.woff2") format("woff2"),
+  url("../fonts/NanumSquareNeoTTF-dEb.woff") format("woff"),
+  url("../fonts/NanumSquareNeoTTF-dEb.eot") format("opentype"),
+  url("../fonts/NanumSquareNeoTTF-dEb.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "NanumSquareNeo";
+  font-weight: 800;
+  font-style: normal;
+  src: local("NanumSquareNeoTTF eHv"),
+  url("../fonts/NanumSquareNeoTTF-eHv.woff2") format("woff2"),
+  url("../fonts/NanumSquareNeoTTF-eHv.woff") format("woff"),
+  url("../fonts/NanumSquareNeoTTF-eHv.eot") format("opentype"),
+  url("../fonts/NanumSquareNeoTTF-eHv.otf") format("opentype");
+}
