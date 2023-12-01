@@ -38,7 +38,7 @@
 	<hr class="hide" />	
 
 	<!-- header -->
-	<div id="header">
+	<div id="header" class="header_main"> <!-- 메인에서만 header_main 클래스 -->
 		<div class="hd_wrap">
 			<div class="hd_inner">
 				<div id="logo">
@@ -93,6 +93,7 @@
 				</div>
 
 				<div class="hd_r">
+					<div class="hd_name">손대성(190004058)님</div>
 					<div class="top_sns_box">
 						<ul>
 							<li><a href="https://www.facebook.com/matchupkr" title="매치업 페이스북 새창으로 열림" target="_blank" class="facebook">페이스북</a></li>
@@ -121,6 +122,7 @@
 							</div>
 						</div>
 						<button type="button" class="hd_icon_btn search_close">통합검색 닫기</button>
+						<span class="search_bg"></span>
 					</div>
 					<div class="hd_icon_box nav_all">
 						<button type="button" class="hd_icon_btn nav_all_open">전체 메뉴 열기</button>
@@ -132,8 +134,8 @@
 									<button type="button" class="btn_close">전체 메뉴 닫기</button>
 								</div>
 								<a href="javascript:;" class="mb_name">로그인을 해주세요.</a>
-								<span class="mb_name">손대성(190004058)님</span>
-								<div class="icon_linsk">
+								<!-- <span class="mb_name">손대성(190004058)님</span> -->
+								<div class="icon_link">
 									<a href="javascript:;" class="logout">로그아웃</a>
 									<a href="javascript:;" class="mypage">마이페이지</a>
 									<a href="javascript:;" class="sitemap">사이트맵</a>
@@ -143,8 +145,8 @@
 								<div class="nav_all_cnt">
 									<div class="all_nav">
 										<div class="all_nav_title">전체메뉴</div>
-										<ul class="all_nav">
-											<li><a href="javascript:;"><span>매치업이란</span></a>
+										<ul class="all_nav_ul">
+											<li><a href="javacript:;"><span>매치업이란</span></a>
 											<ul>
 												<li><a href="javacript:;" target="_top"><span>매치업 소개</span></a></li>
 												<li><a href="javacript:;" target="_top"><span>매치업 활용기업</span></a></li>
@@ -192,7 +194,7 @@
 											<span>매치업의 전체 메뉴를<br/>한번에 확인하세요.</span>
 										</a>
 										<div class="nav_banner">
-											<div class="nav_banner_slider">
+											<div class="nav_banner_slider slider">
 												<div class="item"><img src="../../assets/images/dummy/nav_banner_slider_img.jpg" alt=""></div>
 												<div class="item"><img src="../../assets/images/dummy/nav_banner_slider_img.jpg" alt=""></div>
 												<div class="item"><img src="../../assets/images/dummy/nav_banner_slider_img.jpg" alt=""></div>
@@ -219,6 +221,9 @@
 	</div>
 	<script>
 	$(document).ready(function () {
+		//상단 script공통 변수
+		var header = $('#header');
+
 		//상단 nav
         var navUl = $('#nav > ul > li > ul');
         var navBg = $('.nav_bg');
@@ -259,17 +264,133 @@
         });
 
 		//마이페이지
+		var mypageOpenStatus = 'close';
         var mypageOpenBtn = $('.mypage_open');
         var mypageLinks = $('.mypage_links');
 
-        $(document).on('click focusin', function (event) {
-            if (!mypageOpenBtn.is(event.target) && !mypageLinks.is(event.target) && mypageLinks.has(event.target).length === 0) {
-                mypageLinks.fadeOut();
-            }
+        $(document).on('mousedown focusin', function (event) {
+                if (!mypageOpenBtn.is(event.target) && !mypageLinks.is(event.target) && mypageLinks.has(event.target).length === 0) {
+                    mypageLinks.fadeOut(300);
+                    mypageOpenStatus = 'close';
+                    return false;
+                }
         });
-        mypageOpenBtn.on('click focusin', function () {
-            mypageLinks.fadeToggle();
+        mypageOpenBtn.on('mousedown focusin', function () {
+			if(mypageOpenStatus === 'close'){
+				mypageLinks.fadeIn(300);
+				mypageOpenStatus = 'open'
+			}
+			return false;
         });
+		$('.mypage_links a:last-child').on('focusout', function () {
+			if(mypageOpenStatus === 'open'){
+				mypageLinks.fadeOut(300);
+				mypageOpenStatus = 'close'
+			}
+			return false;
+        });
+
+		//통합검색
+		var searchOpenStatus = 'close';
+        var searchOpenBtn = $('.search_open');
+        var searchCloseBtn = $('.search_close');
+        var searchBg = $('.search_bg');
+        var searchForm = $('.search_form');
+        $(document).on('mousedown focusin', function (event) {
+			if(searchOpenStatus == 'open'){
+				if (!searchOpenBtn.is(event.target) && !searchForm.is(event.target) && searchForm.has(event.target).length === 0) {
+					searchForm.fadeOut(300);
+					searchCloseBtn.fadeOut(300);
+					searchBg.fadeOut(300);
+					header.removeClass('active');
+					return false;
+				}
+			}
+        });
+        searchOpenBtn.on('mousedown focusin', function () {
+            searchForm.fadeIn(300);
+			searchCloseBtn.fadeIn(300);
+			searchBg.fadeIn(300);
+			header.addClass('active');
+			searchOpenStatus = 'open';
+			return false;
+
+        });
+		searchCloseBtn.on('mousedown focusout', function () {
+            searchForm.fadeOut(300);
+			searchCloseBtn.fadeOut(300);
+			searchBg.fadeOut(300);
+			header.removeClass('active');
+			searchOpenStatus = 'close';
+			return false;
+        });
+
+		//전체메뉴
+		var allnavOpenStatus = 'close';
+        var allnavOpenBtn = $('.nav_all_open');
+        var allnavCloseBtn = $('.nav_all_close');
+        var mobileAllnavCloseBtn = $('.nav_all_innner .btn_close');
+        var allnavForm = $('.nav_all_innner');
+        var navMenu = $('.nav_form');
+        $(document).on('mousedown focusin', function (event) {
+			if(allnavOpenStatus == 'open'){
+				if (!allnavCloseBtn.is(event.target) && !allnavForm.is(event.target) && allnavForm.has(event.target).length === 0) {
+					allnavForm.fadeOut(300);
+					allnavCloseBtn.fadeOut(300);
+					allnavOpenBtn.fadeIn(300);
+					navMenu.fadeIn(300);
+					header.removeClass('nav_active');
+					return false;
+				}
+			}
+        });
+        allnavOpenBtn.on('mousedown focusin', function () {
+            allnavForm.fadeIn(300);
+			allnavCloseBtn.fadeIn(300);
+			allnavOpenBtn.fadeOut(300);
+			navMenu.fadeOut(300);
+			header.addClass('nav_active');
+			sliderRe();
+			allnavOpenStatus = 'open';
+			return false;
+
+        });
+		allnavCloseBtn.on('mousedown focusout', function () {
+            allnavForm.fadeOut(300);
+			allnavCloseBtn.fadeOut(300);
+			allnavOpenBtn.fadeIn(300);
+			navMenu.fadeIn(300);
+			header.removeClass('nav_active');
+			allnavOpenStatus = 'close';
+			return false;
+        });
+		mobileAllnavCloseBtn.on('mousedown focusout', function () {
+            allnavForm.fadeOut(300);
+			allnavCloseBtn.fadeOut(300);
+			allnavOpenBtn.fadeIn(300);
+			navMenu.fadeIn(300);
+			header.removeClass('nav_active');
+			allnavOpenStatus = 'close';
+			return false;
+        });
+
+		$('.all_nav_ul > li > a').click(function (event) {
+			if($(this).next('ul').length == 0){ //하위 메뉴가 없으면 그대로 링크 이동
+				return false;
+			}
+			if (window.innerWidth <= 1249) { //모바일에서만 토글 작동
+				event.preventDefault();
+				if($(this).closest('li').hasClass('active')){
+					$('.all_nav_ul > li').removeClass('active');
+					$('.all_nav_ul > li > ul').slideUp();
+				}else{
+					$('.all_nav_ul > li').removeClass('active');
+					$('.all_nav_ul > li > ul').slideUp();
+					$(this).closest('li').addClass('active');
+					$(this).next('ul').slideDown();
+				}
+			}
+		});
 
 		//전체메뉴 슬라이드
 		var slider = $('.nav_banner_slider').slick({
@@ -1154,8 +1275,24 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 	<button type="button" class="to_top" title="상단으로 이동">TOP</button>
 
 	<div id="footer">
-		<div class="ft_top clearfix">
-			<div class="container">
+		<div class="ft_inner">
+			<div class="ft_left">
+				<div class="ft_logo">
+					<a href="javascript:;" title="매치업 메인화면으로 이동"><img src="../../assets/images/ft_logo.jpg" alt="매치업"></a>
+				</div>
+				<div class="ft_sns">
+					<ul>
+						<li>
+							<a href="https://www.facebook.com/matchupkr" class="btn f" title="매치업 페이스북 새창으로 열림" target="_blank">Facebook</a>
+						</li><li>
+							<a href="https://blog.naver.com/matchup_kr" class="btn n" title="매치업 네이버블로그 새창으로 열림" target="_blank">네이버블로그</a>
+						</li><li>
+							<a href="https://post.naver.com/matchup_kr" class="btn n2" title="매치업 네이버포스트 새창으로 열림" target="_blank">네이버포스트</a>
+						</li><li>
+							<a href="https://www.instagram.com/matchup_kr" class="btn i" title="매치업 인스타그램 새창으로 열림" target="_blank">Instagram</a>
+						</li>
+					</ul>
+				</div>
 				<div class="ft_links">
 					<ul>
 						<li><a href="javascript:;" title="이용약관">이용약관</a></li>
@@ -1164,40 +1301,23 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 						<li><a href="javascript:;" title="오시는 길">오시는 길</a></li>
 					</ul>
 				</div>
-				
-				<div class="ft_sf">
-					<div class="ft_sns">
-						<ul>
-							<li>
-								<a href="https://www.facebook.com/matchupkr" class="btn f" title="매치업 페이스북 새창으로 열림" target="_blank">페이스북</a>
-							</li><li>
-								<a href="https://blog.naver.com/matchup_kr" class="btn n" title="매치업 네이버블로그 새창으로 열림" target="_blank">네이버</a>
-							</li><li>
-								<a href="https://post.naver.com/matchup_kr" class="btn n2" title="매치업 네이버포스트 새창으로 열림" target="_blank">네이버포스트</a>
-							</li><li>
-								<a href="https://www.instagram.com/matchup_kr" class="btn i" title="매치업 인스타그램 새창으로 열림" target="_blank">인스타그램</a>
-							</li>
-						</ul>
-					</div>
-					<div class="ft_family">
-						<button class="family_btn" aria-haspopup="listbox" aria-labelledby="dropFamilyClauseTitle dropFamilyClauseBtn" id="dropFamilyClauseBtn" title="패밀리 사이트" aria-expanded="true">패밀리 사이트<span class="screen_hide">하위 메뉴 있음</span></button>
-						<ul class="droplist design_scroll" tabindex="-1" aria-labelledby="dropFamilyClauseTitle" aria-activedescendant="optFamilyClause01">
-							<li id="optFamilyClause01" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트1</a></li>
-							<li id="optFamilyClause02" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트2</a></li>
-							<li id="optFamilyClause03" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트3</a></li>
-							<li id="optFamilyClause04" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트4</a></li>
-							<li id="optFamilyClause05" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트5</a></li>
-							<li id="optFamilyClause06" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트6</a></li>
-							<li id="optFamilyClause07" class="droplist_item"><a href="javascript:;" target="_blank" title="새 창으로 열림">패밀리 사이트7</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="ft_bottom">
-			<div class="container">
-				<div class="fb_logo">
-					<a href="javascript:;" title="매치업 메인화면으로 이동"><img src="../../assets/images/ft_logo.jpg" alt="매치업 로고"></a>
+				<div class="ft_family">
+					<button class="family_btn" aria-haspopup="listbox" aria-labelledby="dropFamilyClauseTitle dropFamilyClauseBtn" id="dropFamilyClauseBtn" title="Family Site" aria-expanded="true">Family Site<span class="screen_hide">하위 메뉴 있음</span></button>
+					<ul class="droplist design_scroll" tabindex="-1" aria-labelledby="dropFamilyClauseTitle" aria-activedescendant="optFamilyClause01">
+						<li id="optFamilyClause01" class="droplist_item"><a href="javascript:fn_goFamily('http://www.moe.go.kr');"  title="새 창으로 열림">교육부</a></li>
+						<li id="optFamilyClause02" class="droplist_item"><a href="javascript:fn_goFamily('http://www.nile.or.kr');" title="새 창으로 열림">국가평생교육진흥원</a></li>
+						<li id="optFamilyClause03" class="droplist_item"><a href="javascript:fn_goFamily('http://www.kmooc.kr');" title="새 창으로 열림">K-MOOC</a></li>
+						<li id="optFamilyClause04" class="droplist_item"><a href="javascript:fn_goFamily('http://www.lifelongedu.go.kr');" title="새 창으로 열림">늘배움</a></li>
+						<li id="optFamilyClause05" class="droplist_item"><a href="javascript:fn_goFamily('http://www.all.go.kr');" title="새 창으로 열림">평생학습계좌제</a></li>
+						<li id="optFamilyClause06" class="droplist_item"><a href="javascript:fn_goFamily('http://www.cb.or.kr');" title="새 창으로 열림">학점은행제</a></li>
+						<li id="optFamilyClause07" class="droplist_item"><a href="javascript:fn_goFamily('http://bdes.nile.or.kr');" title="새 창으로 열림">독학학위제</a></li>
+						<li id="optFamilyClause08" class="droplist_item"><a href="javascript:fn_goFamily('http://www.le.or.kr');" title="새 창으로 열림">국가문해교육센터</a></li>
+						<li id="optFamilyClause09" class="droplist_item"><a href="javascript:fn_goFamily('http://lledu.nile.or.kr');" title="새 창으로 열림">평생교육사</a></li>
+						<li id="optFamilyClause10" class="droplist_item"><a href="javascript:fn_goFamily('http://edu4mc.or.kr');" title="새 창으로 열림">중앙다문화교육센터</a></li>
+						<li id="optFamilyClause11" class="droplist_item"><a href="javascript:fn_goFamily('http://www.parents.go.kr');" title="새 창으로 열림">전국학부모지원센터</a></li>
+						<li id="optFamilyClause12" class="droplist_item"><a href="javascript:fn_goFamily('http://www.cbinfo.or.kr');" title="새 창으로 열림">학점은행제 알리미</a></li>
+						<li id="optFamilyClause13" class="droplist_item"><a href="javascript:fn_goFamily('http://univ.nile.or.kr');" title="새 창으로 열림">대학평생교육활성화</a></li>
+					</ul>
 				</div>
 				<div class="fb_info">
 					<div class="f_info">
@@ -1206,6 +1326,8 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 					</div>
 					<div class="copyright">Copyright (c) Match業 ALL RIGHTS RESERVED.</div>
 				</div>
+			</div>
+			<div class="ft_right">
 				<div class="logo_area">
 					<ul>
 						<li>

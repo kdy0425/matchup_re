@@ -30,7 +30,7 @@
 /*메인*/
 /*상단배너*/
 @media (min-width: 1250px) {
-	.main_visual{background-color:#fcfcfc;height:360px;}
+	.main_visual{background-color:#eff5ff;height:360px;}
 	.main_visual .container{background-image:url('../images/main_visual.jpg');background-repeat:no-repeat;background-position:right 16px top;height:360px;}
 	.main_visual h2{font-size:40px;color:#000;padding-left:5px;margin-top:80px;}
 	.main_visual h2 .txt{display:inline-block;margin:0 10px;position:relative;}
@@ -45,7 +45,7 @@
 }
 
 @media (max-width: 1249px) {
-	.main_visual{background-color:#fcfcfc;background-image:url('../images/main_visual_m.png');background-repeat:no-repeat;background-position:center bottom;background-size:100% auto;padding-top:8%;padding-bottom:34%;text-align:center;}
+	.main_visual{background-color:#eff5ff;background-image:url('../images/main_visual_m.png');background-repeat:no-repeat;background-position:center bottom;background-size:100% auto;padding-top:calc(8% + 54px);padding-bottom:34%;text-align:center;}
 	.main_visual .container{}
 	.main_visual h2{color:#000;margin-top:3vw;font-size:5vw;}
 	.main_visual h2 .txt{display:inline-block;margin:0 1.5vw;position:relative;}
