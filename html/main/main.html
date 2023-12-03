@@ -17,6 +17,7 @@
 <link rel="stylesheet" type="text/css" href="../../assets/css/normalize.css" />
 <link rel="stylesheet" type="text/css" href="../../assets/css/common.css" />
 <link rel="stylesheet" type="text/css" href="../../assets/css/layout.css" />
+<link rel="stylesheet" type="text/css" href="../../assets/css/main.css" />
 <link rel="stylesheet" type="text/css" href="../../assets/css/content.css" />
 <link rel="stylesheet" type="text/css" href="../../assets/css/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="../../assets/css/jquery.scrollbar.css" />
@@ -36,6 +37,73 @@
 		<a href="#nav">주메뉴 바로가기</a>
 	</div>
 	<hr class="hide" />	
+
+	<!-- 팝업 -->
+	<div class="popup_banner" style="max-width:366px;">
+		<div class="popup_content">
+			<div class="popup_slide">
+				<div class="item">
+					<a href="javascript:;"><img src="../../assets/images/popup_banner_img.jpg" alt=""></a>
+				</div>
+				<div class="item">
+					<a href="javascript:;"><img src="../../assets/images/popup_banner_img.jpg" alt=""></a>
+				</div>
+			</div>
+			<div class="popup_btns">
+				<div class="popup_banner_ctrl">
+					<button type="button" class="popup_arrow popup_banner_prev">이전 슬라이드</button>
+					<span class="slide_count"><strong>1</strong> / 2</span>
+					<button type="button" class="popup_arrow popup_banner_next">다음 슬라이드</button>
+					<button type="button" class="popup_banner_pause">일시정지</button>
+					<button type="button" class="popup_banner_play" style="display:none;">재생</button>
+				</div>
+				<div class="popup_close">
+					<label><input type="checkbox"><span class="ck_icon"></span>오늘 하루 보지 않기</label>
+					<button type="button" class="popup_close_btn" onclick="$('.popup_banner').hide()">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	//팝업 슬라이드
+	var slider_popup_banner = $('.popup_slide').slick({
+		dots: false,
+		arrows: false,
+		autoplay: true,
+		adaptiveHeight: true,
+		autoplaySpeed: 5000
+	});
+
+	// 이전 슬라이드 버튼 클릭
+	$('.popup_banner_ctrl .popup_banner_prev').click(function () {
+		slider_popup_banner.slick('slickPrev');
+	});
+
+	// 다음 슬라이드 버튼 클릭
+	$('.popup_banner_ctrl .popup_banner_next').click(function () {
+		slider_popup_banner.slick('slickNext');
+	});
+
+	// 일시정지 버튼 클릭
+	$('.popup_banner_ctrl .popup_banner_pause').click(function () {
+		slider_popup_banner.slick('slickPause');
+		$(this).hide();
+		$('.popup_banner_play').show();
+	});
+
+	// 재생 버튼 클릭
+	$('.popup_banner_ctrl .popup_banner_play').click(function () {
+		slider_popup_banner.slick('slickPlay');
+		$(this).hide();
+		$('.popup_banner_pause').show();
+	});
+
+	// 슬라이드 변경 이벤트 감지
+	slider_popup_banner.on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+		$('.popup_banner_ctrl .slide_count strong').text(nextSlide + 1);
+	});
+	</script>
+	<!-- //팝업 -->
 
 	<!-- header -->
 	<div id="header" class="header_main"> <!-- 메인에서만 header_main 클래스 -->
@@ -242,10 +310,10 @@
                 }
             });
 
-            navBg.css('height', maxHeight);
-            navBg.slideDown(300);
-            navUl.slideDown(300);
-            isHovered = true;
+            navBg.stop().css('height', maxHeight);
+			navBg.stop().slideDown(300);
+			navUl.stop().slideDown(300);
+			isHovered = true;
         });
 
         $('#nav, .nav_bg').on('mouseleave focusout', function (event) {
@@ -253,9 +321,9 @@
                 return false;
             }
             if (isHovered) {
-				navUl.slideUp(300, function () {
+				navUl.stop().slideUp(300, function () {
 				});
-				navBg.slideUp(300, function () {
+				navBg.stop().slideUp(300, function () {
 					navBg.hide();
 				});
 
@@ -274,21 +342,31 @@
                     mypageOpenStatus = 'close';
                     return false;
                 }
-        });
+        }); 
         mypageOpenBtn.on('mousedown focusin', function () {
-			if(mypageOpenStatus === 'close'){
-				mypageLinks.fadeIn(300);
-				mypageOpenStatus = 'open'
+			if(mypageOpenStatus == 'open'){
+				mypageClose();
+			}else{
+				mypageOpen();
+				searchClose();
+				allnavClose();
 			}
+			
 			return false;
         });
+		function mypageOpen(){
+			mypageLinks.fadeIn(300);
+			mypageOpenStatus = 'open'
+			return false;
+		}
 		$('.mypage_links a:last-child').on('focusout', function () {
-			if(mypageOpenStatus === 'open'){
-				mypageLinks.fadeOut(300);
-				mypageOpenStatus = 'close'
-			}
-			return false;
+			mypageClose();
         });
+		function mypageClose(){
+			mypageLinks.fadeOut(300);
+			mypageOpenStatus = 'close'
+			return false;
+		}
 
 		//통합검색
 		var searchOpenStatus = 'close';
@@ -308,22 +386,30 @@
 			}
         });
         searchOpenBtn.on('mousedown focusin', function () {
-            searchForm.fadeIn(300);
+			searchOpen();
+			mypageClose();
+			allnavClose();
+			return false;
+        });
+		function searchOpen(){
+			searchForm.fadeIn(300);
 			searchCloseBtn.fadeIn(300);
 			searchBg.fadeIn(300);
 			header.addClass('active');
 			searchOpenStatus = 'open';
 			return false;
-
-        });
+		}
 		searchCloseBtn.on('mousedown focusout', function () {
-            searchForm.fadeOut(300);
+            searchClose();
+        });
+		function searchClose(){
+			searchForm.fadeOut(300);
 			searchCloseBtn.fadeOut(300);
 			searchBg.fadeOut(300);
 			header.removeClass('active');
 			searchOpenStatus = 'close';
 			return false;
-        });
+		}
 
 		//전체메뉴
 		var allnavOpenStatus = 'close';
@@ -345,7 +431,13 @@
 			}
         });
         allnavOpenBtn.on('mousedown focusin', function () {
-            allnavForm.fadeIn(300);
+            allnavOpen();
+			mypageClose();
+			searchClose();
+			return false;
+        });
+		function allnavOpen(){
+			allnavForm.fadeIn(300);
 			allnavCloseBtn.fadeIn(300);
 			allnavOpenBtn.fadeOut(300);
 			navMenu.fadeOut(300);
@@ -353,26 +445,23 @@
 			sliderRe();
 			allnavOpenStatus = 'open';
 			return false;
-
-        });
+		}
 		allnavCloseBtn.on('mousedown focusout', function () {
-            allnavForm.fadeOut(300);
-			allnavCloseBtn.fadeOut(300);
-			allnavOpenBtn.fadeIn(300);
-			navMenu.fadeIn(300);
-			header.removeClass('nav_active');
-			allnavOpenStatus = 'close';
-			return false;
+            allnavClose();
         });
 		mobileAllnavCloseBtn.on('mousedown focusout', function () {
-            allnavForm.fadeOut(300);
+            allnavClose();
+        });
+		function allnavClose(){
+			console.log(1)
+			allnavForm.fadeOut(300);
 			allnavCloseBtn.fadeOut(300);
 			allnavOpenBtn.fadeIn(300);
 			navMenu.fadeIn(300);
 			header.removeClass('nav_active');
 			allnavOpenStatus = 'close';
 			return false;
-        });
+		}
 
 		$('.all_nav_ul > li > a').click(function (event) {
 			if($(this).next('ul').length == 0){ //하위 메뉴가 없으면 그대로 링크 이동
@@ -393,7 +482,7 @@
 		});
 
 		//전체메뉴 슬라이드
-		var slider = $('.nav_banner_slider').slick({
+		var slider_nav_banner = $('.nav_banner_slider').slick({
 			dots: false,
 			arrows: false,
 			autoplay: true,
@@ -402,32 +491,32 @@
 		});
 
 		// 이전 슬라이드 버튼 클릭
-		$('.nav_banner_prev').click(function () {
-			slider.slick('slickPrev');
+		$('.nav_banner_ctrl .nav_banner_prev').click(function () {
+			slider_nav_banner.slick('slickPrev');
 		});
 
 		// 다음 슬라이드 버튼 클릭
-		$('.nav_banner_next').click(function () {
-			slider.slick('slickNext');
+		$('.nav_banner_ctrl .nav_banner_next').click(function () {
+			slider_nav_banner.slick('slickNext');
 		});
 
 		// 일시정지 버튼 클릭
-		$('.nav_banner_pause').click(function () {
-			slider.slick('slickPause');
+		$('.nav_banner_ctrl .nav_banner_pause').click(function () {
+			slider_nav_banner.slick('slickPause');
 			$(this).hide();
 			$('.nav_banner_play').show();
 		});
 
 		// 재생 버튼 클릭
-		$('.nav_banner_play').click(function () {
-			slider.slick('slickPlay');
+		$('.nav_banner_ctrl .nav_banner_play').click(function () {
+			slider_nav_banner.slick('slickPlay');
 			$(this).hide();
 			$('.nav_banner_pause').show();
 		});
 
 		// 슬라이드 변경 이벤트 감지
-		slider.on('beforeChange', function (event, slick, currentSlide, nextSlide) {
-			$('.slide_count strong').text(nextSlide + 1);
+		slider_nav_banner.on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+			$('.nav_banner_ctrl .slide_count strong').text(nextSlide + 1);
 		});
     });
 	</script>
@@ -436,728 +525,723 @@
 	<!-- content -->
 	<div id="content" class="content">
 		<div class="main_visual">
-			<div class="container">
-				<h2><strong><span class="txt">매치업,</span><span class="txt">편하고<span class="check check1">온라인</span></span>·<span class="txt">빠르고<span class="check check2">6개월 미만</span></span>·<span class="txt">촘촘한<span class="check check3">대표기업 참여</span></span></strong>4차 산업혁명 분야 단기직무능력인증과정</h2>
+			<div class="mv_inner">
+				<div class="mv_bg pc" style="background-image: url('../../assets/images/mv_img.jpg');"></div>
+				<div class="mv_bg mobile" style="background-image: url('../../assets/images/mv_img_mobile.png');"></div>
+				<div class="keywords">
+					<span>#온라인</span>
+					<span>#6개월미만</span>
+					<span>#대표기업 참여</span>
+				</div>
+				<h2>
+					매치업, 편하고 · 빠르고 · 촘촘한 
+					<strong>디지털 대전환 신산업분야 단기직무능력인증과정</strong>
+				</h2>
 				<a href="javascript:;" class="mv_btn" title="교육 분야 확인하기" target="_top">교육 분야 확인하기</a>
 			</div>
 		</div>
 
 		<div class="main_content">
-			<div class="container">
-				<div class="mc_section clearfix">
-					<!-- 모집강좌 -->
-					<div class="ms_sbox rc_lst">
-						<h2 class="ms_title clearfix"><strong>모집강좌</strong></h2>
-						<div class="cnt">
-							<ul class="rc_lst_slider">
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">HMG 신에너지자동차 이해</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst1.png');"><span class="sound_only"><span class="sound_only">핵심직무, 인증평가 개발기관: HYUNDAI</span> HYUNDAI NGV</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">인공지능</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst2.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: KT</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">빅데이터</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst3.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: exem</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">스마트물류</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst4.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: 하림</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">블록체인</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst5.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: SK 네트웍스</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">스마트팜</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst6.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: 팜한농 LG CNS</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">스마트시티</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst7.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: NAVER Microsoft</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-								<li class="item">
-									<a href="javascript:;">
-										<span class="subject">지능형자동차</span>
-										<div class="time">
-											<div class="row"><strong>신청기간</strong>06.24(수)~10.13(화)</div>
-											<div class="row"><strong>학습기간</strong>10.14(수)~2021.01.26(화)</div>
-										</div>
-										<div class="ci" style="background-image:url('../../assets/images/dummy/rs_lst8.png');"><span class="sound_only">핵심직무, 인증평가 개발기관: HYUNDAI</span></div>
-										<span class="dday">D-22</span>
-									</a>
-								</li>
-							</ul>
-							<div class="rc_lst_ctrl">
-								<button type="button" class="rc_pause">일시정지</button>
-								<button type="button" class="rc_play" style="display:none;">재생</button>
-							</div>
+			<div class="main_rtop_box">
+				<div class="main_rtop_inner">
+					<div class="main_wbox main_lecture">
+						<div class="wbox_title">모집강좌</div>
+						<ul class="lecture_slider">
+							<li class="item">
+								<a href="javascript:;">
+									<div class="subject"><span class="day">D-15</span><strong>수소차용 연료전지 시스템 이해</strong></div>
+									<div class="time">
+										<div>신청기간 : 2023.07.07 ~ 2023.12.01</div>
+										<div>학습기간 : 2023.07.07 ~ 2023.12.15</div>
+									</div>
+									<div class="ci"><div style="background-image:url('../../assets/images/rs_lst1.jpg');"></div><span class="sound_only"><span class="sound_only">핵심직무, 인증평가 개발기관: HYUNDAI</span> HYUNDAI NGV</span></div>
+									<div class="cate">
+										<span>신에너지자동차</span>
+									</div>
+								</a>
+							</li>
+							<li class="item">
+								<a href="javascript:;">
+									<div class="subject"><span class="day">D-15</span><strong>수소차용 연료전지 시스템 이해 수소차용 연료전지 시스템 이해</strong></div>
+									<div class="time">
+										<div>신청기간 : 2023.07.07 ~ 2023.12.01</div>
+										<div>학습기간 : 2023.07.07 ~ 2023.12.15</div>
+									</div>
+									<div class="ci"><div style="background-image:url('../../assets/images/rs_lst1.jpg');"></div><span class="sound_only"><span class="sound_only">핵심직무, 인증평가 개발기관: HYUNDAI</span> HYUNDAI NGV</span></div>
+									<div class="cate">
+										<span>신에너지자동차</span>
+										<span>신에너지자동차</span>
+									</div>
+								</a>
+							</li>
+							<li class="item">
+								<a href="javascript:;">
+									<div class="subject"><span class="day">D-15</span><strong>수소차용 연료전지 시스템 이해</strong></div>
+									<div class="time">
+										<div>신청기간 : 2023.07.07 ~ 2023.12.01</div>
+										<div>학습기간 : 2023.07.07 ~ 2023.12.15</div>
+									</div>
+									<div class="ci"><div style="background-image:url('../../assets/images/rs_lst1.jpg');"></div><span class="sound_only"><span class="sound_only">핵심직무, 인증평가 개발기관: HYUNDAI</span> HYUNDAI NGV</span></div>
+									<div class="cate">
+										<span>신에너지자동차</span>
+									</div>
+								</a>
+							</li>
+						</ul>
+						<div class="lecture_slide_ctrl">
+							<button type="button" class="nav_arrow nav_banner_prev">이전 슬라이드</button>
+							<span class="slide_count"><strong>1</strong> / 3</span>
+							<button type="button" class="nav_arrow nav_banner_next">다음 슬라이드</button>
 						</div>
-					</div>
+						<script>
+							var lecture_slider = $('.lecture_slider').slick({
+								dots: false,
+								arrows: false,
+								adaptiveHeight: true
+							});
+							
+							// 이전 슬라이드 버튼 클릭
+							$('.lecture_slide_ctrl .nav_banner_prev').click(function () {
+								lecture_slider.slick('slickPrev');
+							});
 
-					<!-- 공지사항 -->
-					<div class="ms_sbox ms_notice">
-						<h2 class="ms_title clearfix"><strong>공지사항</strong></h2>
-						<div class="cnt">
-							<ul class="nt_lst">
-								<li><a href="javascript:;" class="subject" target="_top">매치업(Match業) 인공지능분야 직무능력인증평가 일정일정일정일정</a><span class="new"><span class="sound_only">새글</span></span></li>
-								<li><a href="javascript:;" class="subject" target="_top">매치업 홈페이지 서비스 일시 중단 안내(5.31(금)</a><span class="new"><span class="sound_only">새글</span></span></li>
-								<li><a href="javascript:;" class="subject" target="_top">매치업 홈페이지 서비스 일시 중단 안내(5.31(금)</a></li>
-								<li><a href="javascript:;" class="subject" target="_top">매치업 홈페이지 서비스 일시 중단 안내(5.31(금)</a></li>
-								<li><a href="javascript:;" class="subject" target="_top">매치업 홈페이지 서비스 일시 중단 안내(5.31(금)</a></li>
-							</ul>
+							// 다음 슬라이드 버튼 클릭
+							$('.lecture_slide_ctrl .nav_banner_next').click(function () {
+								lecture_slider.slick('slickNext');
+							});
+
+							// 슬라이드 변경 이벤트 감지
+							lecture_slider.on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+								$('.lecture_slide_ctrl .slide_count strong').text(nextSlide + 1);
+							});
+						</script>
+					</div>
+					<div class="notice_issuance">
+						<div class="main_wbox">
+							<div class="wbox_title">공지사항</div>
+							<div class="notice_lastest">
+								<div class="item">
+									<a href="javascript:;">2023년 매치업(Match業) 이수증·인증서 이벤트 실시 안내</a>
+									<span class="date">2023.10.16</span>
+								</div>
+								<div class="item">
+									<a href="javascript:;">2023년 매치업(Match業) 이수증·인증서 이벤트 실시 안내 이수증·인증서 이벤트 실시 안내이수증·인증서 이벤트 실시 안내</a>
+									<span class="date">2023.10.16</span>
+								</div>
+								<div class="item">
+									<a href="javascript:;">2023년 매치업(Match業) 이수증·인증서 이벤트 실시 안내</a>
+									<span class="date">2023.10.16</span>
+								</div>
+								<div class="item">
+									<a href="javascript:;">2023년 매치업(Match業) 이수증·인증서 이벤트 실시 안내</a>
+									<span class="date">2023.10.16</span>
+								</div>
+								<div class="item">
+									<a href="javascript:;">2023년 매치업(Match業) 이수증·인증서 이벤트 실시 안내</a>
+									<span class="date">2023.10.16</span>
+								</div>
+							</div>
 							<a href="javascript:;" class="lst_more">공지사항 더 보기</a>
 						</div>
-					</div>
-
-					<!-- 서류발급 -->
-					<div class="ms_sbox ms_issue">
-						<div class="cnt">
-							<ul class="clearfix">
-								<li>
-									<a href="javascript:;" target="_top" class="cp">
-										<span class="title">이수증 발급</span>
-										<span class="txt">본인인증 후 이수증을 발급할 수 있습니다. </span>
-									</a>
-								</li>
-								<li>
-									<a href="javascript:;" target="_top" class="ct">
-										<span class="title">인증서 발급</span>
-										<span class="txt">본인인증 후 인증서를 발급할 수 있습니다. </span>
-									</a>
-								</li>
-							</ul>
+						<div class="main_issuance">
+							<a href="javascript:;" target="_top" class="completion">
+								<span class="tit">이수증 발급</span>
+								<span class="txt">본인인증 후 이수증을<br/>
+									발급할 수 있습니다.</span>
+							</a>
+							<a href="javascript:;" target="_top" class="certificate">
+								<span class="tit">인증서 발급</span>
+								<span class="txt">본인인증 후 인증서를<br/>
+									발급할 수 있습니다.</span>
+							</a>
 						</div>
 					</div>
-
 				</div>
+			</div>
 
-				<div class="mc_section main_process">
-					<h2 class="ms_title clearfix"><strong>교육과정</strong><span class="stit">매치업의 교육과정 정보를 확인하세요.</span></h2>
+			<div class="container">
+				<div class="mc_section main_curriculum">
+					<h2 class="ms_title">매치업의 교육과정 정보를 확인하세요.</h2>
 					<div class="cnt ms_process">
 						<div class="tabs">
 							<div role="tablist" aria-orientation="vertical" aria-label="Entertainment" class="tabs_btn">
 								<button class="process0" role="tab" aria-selected="true" aria-controls="process_0">전체</button>
-								<button tabindex="-1" class="process1" role="tab" aria-selected="false" aria-controls="process_1">스마트시티</button>
-								<button tabindex="-1" class="process2" role="tab" aria-selected="false" aria-controls="process_2" data-deletable="">지능형자동차</button>
-								<button tabindex="-1" class="process3" role="tab" aria-selected="false" aria-controls="process_3" data-deletable="">스마트팜</button>
-								<button tabindex="-1" class="process4" role="tab" aria-selected="false" aria-controls="process_4" data-deletable="">신에너지자동차</button>
-								<button tabindex="-1" class="process5" role="tab" aria-selected="false" aria-controls="process_5" data-deletable="">블록체인</button>
-								<button tabindex="-1" class="process6" role="tab" aria-selected="false" aria-controls="process_6" data-deletable="">빅데이터</button>
-								<button tabindex="-1" class="process7" role="tab" aria-selected="false" aria-controls="process_7" data-deletable="">스마트물류</button>
-								<button tabindex="-1" class="process8" role="tab" aria-selected="false" aria-controls="process_8" data-deletable="">인공지능</button>
+								<button tabindex="-1" class="process1" role="tab" aria-selected="false" aria-controls="process_1">드론</button>
+								<button tabindex="-1" class="process2" role="tab" aria-selected="false" aria-controls="process_2" data-deletable="">가상·증강현실</button>
+								<button tabindex="-1" class="process3" role="tab" aria-selected="false" aria-controls="process_3" data-deletable="">빅데이터</button>
+								<button tabindex="-1" class="process4" role="tab" aria-selected="false" aria-controls="process_4" data-deletable="">대체에너지</button>
+								<button tabindex="-1" class="process5" role="tab" aria-selected="false" aria-controls="process_5" data-deletable="">지능형자동차</button>
+								<button tabindex="-1" class="process6" role="tab" aria-selected="false" aria-controls="process_6" data-deletable="">스마트팜</button>
+								<button tabindex="-1" class="process7" role="tab" aria-selected="false" aria-controls="process_7" data-deletable="">신에너지자동차</button>
+								<button tabindex="-1" class="process8" role="tab" aria-selected="false" aria-controls="process_8" data-deletable="">의료메타버스</button>
+								<button tabindex="-1" class="process9" role="tab" aria-selected="false" aria-controls="process_9" data-deletable="">D.N.A</button>
+								<button tabindex="-1" class="process10" role="tab" aria-selected="false" aria-controls="process_10" data-deletable="">지능형농장(스마트팜)</button>
+								<button tabindex="-1" class="process11" role="tab" aria-selected="false" aria-controls="process_11" data-deletable="">클라우드</button>
 							</div>
 
-							<div class="tabs_cnt accordion design_scroll">
-
-								<div tabindex="0" role="tabpanel" aria-labelledby="process0" class="process_0 tabs_box accordion_pannel">
+							<div class="tabs_cnt">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process0" class="process_0 tabs_box">
 									<span id="tap_box0" class="tap_box_ancor"></span>
-									<ul class="process_list2 all"><!-- 전체 all -->
+									<ul class="process_list1 all"><!-- 전체 all -->
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트시티</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>단국대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>22개</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate1.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">수학적 사고</div>
+														<div class="wt">
+															<span>동서울대학교</span>
+															<span>강좌 수 : 12개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">급격한 도시화에 따른 인구 밀집과 비례하여 에너지, 토지 및 기타 자원의 이용도가 점차 증가하면서 ICT기술을 도시 기반시설에 접목시켜 한정된 자원과 제원의 효율적인 활용과 지속가능한 개발을 도모하려는 스마트시티가 주목을 받고 있습니다.</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: Microsoft/NAVER</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc1.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc1.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo1.jpg');"></div>
+														<span class="sound_only">LIG Nex1, uinfra</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb1.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb1.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">지능형자동차</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>현대엔지비(주)</div>
-													<div class="row"><strong>강좌 수 : </strong>9개</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate2.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">가상·증강현실</div>
+														<div class="wt">
+															<span>남서울대학교</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">매치업 프로그램에서는 자율주행을 위한 필수적인 기술인 "인지, 판단, 제어, 통신 및 네트워크"의 총 4가지 핵심직무와 세부 교육과정을 제공합니다.</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: HYUNDAI</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc2.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc2.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo2.jpg');background-color: #000;"></div>
+														<span class="sound_only">Unity</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb2.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb2.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트팜</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>4개</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate3.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">빅데이터</div>
+														<div class="wt">
+															<span>고려사이버대학교</span>
+															<span>강좌 수 : 16개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">스마트팜이란, 유리온실 및 플라스틱온실 등 농업 생산 시설에 정보통신기술(ICT, Information and Communicatio
-n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 관리할 수 있는 농장을 의미합니다. </div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: 팜한농/LG CNS</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc3.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc3.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo3.jpg');background-color: #f28d01;"></div>
+														<span class="sound_only">Data streams</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb3.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb3.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">신에너지자동차</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>현대엔지비(주)</div>
-													<div class="row"><strong>강좌 수 : </strong>18개</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate4.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">대체에너지</div>
+														<div class="wt">
+															<span>순천향대학교</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">신에너지자동차는 기존 내연기관 엔진을 장착한 차량이 화석연료의 힘에 주로 의존했던 패러다임을 벗어나 전기 에너지를 활용해 주행중 오염물질을 거의 배출하지 않는 형태로 변화하는 것을 말합니다.  </div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: HYUNDAI/HYUNDAI NGV</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc4.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc4.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo4.jpg');"></div>
+														<span class="sound_only">한국가스공사</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb4.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb4.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">블록체인</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>한양대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>4개</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate5.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">지능형자동차</div>
+														<div class="wt">
+															<span>현대엔지비(주)</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">‘블록체인(Blockchain)’이란 지속적으로 증가하는 정보를 특정 단위의 블록으로 만들어 유효한 네트워크 상에서 체인처럼 연결하는 데이터 저장 기술로, 중앙 시스템 없이 전세계 각 시스템에서 ‘분산 공공 장부’의 형태로 운영되는 플랫폼을 말합니다.</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: SK 네트웍스</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc5.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc5.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo5.jpg');"></div>
+														<span class="sound_only">HYUNDAI</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb5.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb5.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">빅데이터</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>고려사이버대학교, 한국능률협회/데이터에듀, 포항공과대학교, 코리아헤럴드</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate6.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">스마트팜</div>
+														<div class="wt">
+															<span>연암대학교</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
 												</div>
-												<div class="txt">빅데이터는 다양한 대용량 데이터를 저장, 수집, 분석 등의 과정을 거쳐 새로운 가치를 창출하는 분야를 말합니다.</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: EXEM</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc6.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc6.jpg');"></span>
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo6.jpg');"></div>
+														<span class="sound_only">팜한농 LG CNS</span>
+													</div>
 												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb6.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb6.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트물류</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>서울디지털평생교육원/서울디지털대학교, 중앙대학교, 멀티캠퍼스</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate7.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">신에너지자동차</div>
+														<div class="wt">
+															<span>현대엔지비(주)</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
+												</div> 
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo7.jpg');"></div>
+														<span class="sound_only">팜한농 LG CNS</span>
+													</div>
 												</div>
-												<div class="txt">스마트물류는 IT 서비스와의 접목을 통해 물류의 모든 제반 활동을 실시간으로 제어하고 관리ㆍ운영하기 위한 지능형 국제 통합 물류 체계로 정의할 수 있습니다. </div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: 하림</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc7.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc7.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb7.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb7.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">인공지능</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>전남대학교, 코리아헤럴드/(주)엑셈, 코리아헤럴드</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate8.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">의료메타버스</div>
+														<div class="wt">
+															<span>인천카톨릭대학교</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
+												</div> 
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo8.jpg');"></div>
+														<span class="sound_only">MEDICAL IP</span>
+													</div>
 												</div>
-												<div class="txt">인공지능이란, 인간의 지능 즉, 고도의 문제해결 능력을 가진 인공적 지능을 말합니다. 컴퓨터 공학에서 이상적인 지능을 갖춘 존재, 혹은 시스템에 의해 만들어진 지능, 즉 인공적인 지능을 뜻합니다. </div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc8.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc8.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb8.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb8.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">드론</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate9.jpg');;"></div>
+													<div class="cnt">
+														<div class="subject">D.N.A</div>
+														<div class="wt">
+															<span>건솔루션(주)</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
+												</div> 
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo9.jpg');background-color: #000"></div>
+														<span class="sound_only">MEDICAL IP</span>
+													</div>
 												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc9.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc9.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb9.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb9.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">가상증강현실</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate10.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">지능형농장(스마트팜)</div>
+														<div class="wt">
+															<span>연암대학교</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
+												</div> 
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo10.jpg');"></div>
+														<span class="sound_only">LG CNS</span>
+													</div>
 												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc10.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc10.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb10.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb10.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">대체에너지</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
+											<a href="javascript:;">
+												<div class="top">
+													<div class="cate_img" style="background-image:url('../../assets/images/process_list1_cate11.jpg');"></div>
+													<div class="cnt">
+														<div class="subject">신에너지자동차</div>
+														<div class="wt">
+															<span>(주)IGM세계경영연구원</span>
+															<span>강좌 수 : 8개</span>
+														</div>
+													</div>
+												</div> 
+												<div class="bottom">
+													<div class="txt">4차 산업 분야에서 강조되는 '전동화 차량'은 전기 에너지를 활용하여 주행 중 오염물질을 거의 배출하지 않는 차량을 의미합니다. 차량전동화 콘텐츠는 이러한 전동화 기초 역량 향상을 위하여 현대자동차 '신에너지자동차' 핵심직무에 기반한 교육과정으로 구성되어 있습니다.</div>
+													<div class="ci">
+														<div style="background-image:url('../../assets/images/process_list1_logo11.jpg');"></div>
+														<span class="sound_only">Metanet Tblatform</span>
+													</div>
 												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc11.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc11.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb11.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb11.jpg" alt=""></span>
-												</div>
-											</div>
+											</a>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process1" hidden="" class="process_1 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process1" hidden="" class="process_1 tabs_box">
 									<span id="tap_box1" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트시티</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>단국대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>22개</div>
-												</div>
-												<div class="txt">급격한 도시화에 따른 인구 밀집과 비례하여 에너지, 토지 및 기타 자원의 이용도가 점차 증가하면서 ICT기술을 도시 기반시설에 접목시켜 한정된 자원과 제원의 효율적인 활용과 지속가능한 개발을 도모하려는 스마트시티가 주목을 받고 있습니다.</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title1.png');"><span class="sound_only">빅데이터와 수학적 사고</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: Microsoft/NAVER</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc1.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc1.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb1.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb1.jpg" alt=""></span>
-												</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title2.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title3.png');"><span class="sound_only">비정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">빅데이터 처리 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process2" hidden="" class="process_2 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process2" hidden="" class="process_2 tabs_box">
 									<span id="tap_box2" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">지능형자동차</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>현대엔지비(주)</div>
-													<div class="row"><strong>강좌 수 : </strong>9개</div>
-												</div>
-												<div class="txt">매치업 프로그램에서는 자율주행을 위한 필수적인 기술인 "인지, 판단, 제어, 통신 및 네트워크"의 총 4가지 핵심직무와 세부 교육과정을 제공합니다.</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title1.png');"><span class="sound_only">빅데이터와 수학적 사고</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: HYUNDAI</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc2.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc2.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb2.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb2.jpg" alt=""></span>
-												</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title2.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title3.png');"><span class="sound_only">비정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">빅데이터 처리 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title1.png');"><span class="sound_only">빅데이터와 수학적 사고</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title2.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title3.png');"><span class="sound_only">비정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">빅데이터 처리 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process3" hidden="" class="process_3 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process3" hidden="" class="process_3 tabs_box">
 									<span id="tap_box3" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트팜</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>4개</div>
-												</div>
-												<div class="txt">스마트팜이란, 유리온실 및 플라스틱온실 등 농업 생산 시설에 정보통신기술(ICT, Information and Communicatio
-n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 관리할 수 있는 농장을 의미합니다. </div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: 팜한농/LG CNS</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc3.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc3.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb3.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb3.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title3.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process4" hidden="" class="process_4 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process4" hidden="" class="process_4 tabs_box">
 									<span id="tap_box4" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">신에너지자동차</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>현대엔지비(주)</div>
-													<div class="row"><strong>강좌 수 : </strong>18개</div>
-												</div>
-												<div class="txt">신에너지자동차는 기존 내연기관 엔진을 장착한 차량이 화석연료의 힘에 주로 의존했던 패러다임을 벗어나 전기 에너지를 활용해 주행중 오염물질을 거의 배출하지 않는 형태로 변화하는 것을 말합니다.  </div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: HYUNDAI/HYUNDAI NGV</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc4.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc4.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb4.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb4.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process5" hidden="" class="process_5 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process5" hidden="" class="process_5 tabs_box">
 									<span id="tap_box5" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">블록체인</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>한양대학교</div>
-													<div class="row"><strong>강좌 수 : </strong>4개</div>
-												</div>
-												<div class="txt">‘블록체인(Blockchain)’이란 지속적으로 증가하는 정보를 특정 단위의 블록으로 만들어 유효한 네트워크 상에서 체인처럼 연결하는 데이터 저장 기술로, 중앙 시스템 없이 전세계 각 시스템에서 ‘분산 공공 장부’의 형태로 운영되는 플랫폼을 말합니다.</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: SK 네트웍스</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc5.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc5.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb5.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb5.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title1.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process6" hidden="" class="process_6 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process6" hidden="" class="process_6 tabs_box">
 									<span id="tap_box6" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">빅데이터</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>고려사이버대학교, 한국능률협회/데이터에듀, 포항공과대학교, 코리아헤럴드</div>
-												</div>
-												<div class="txt">빅데이터는 다양한 대용량 데이터를 저장, 수집, 분석 등의 과정을 거쳐 새로운 가치를 창출하는 분야를 말합니다.</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: EXEM</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc6.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc6.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb6.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb6.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title2.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process7" hidden="" class="process_7 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process7" hidden="" class="process_7 tabs_box">
 									<span id="tap_box7" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">스마트물류</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>서울디지털평생교육원/서울디지털대학교, 중앙대학교, 멀티캠퍼스</div>
-												</div>
-												<div class="txt">스마트물류는 IT 서비스와의 접목을 통해 물류의 모든 제반 활동을 실시간으로 제어하고 관리ㆍ운영하기 위한 지능형 국제 통합 물류 체계로 정의할 수 있습니다. </div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: 하림</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc7.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc7.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb7.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb7.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title3.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
 								</div>
 
-								<div tabindex="0" role="tabpanel" aria-labelledby="process8" hidden="" class="process_8 tabs_box accordion_pannel">
+								<div tabindex="0" role="tabpanel" aria-labelledby="process8" hidden="" class="process_8 tabs_box">
 									<span id="tap_box8" class="tap_box_ancor"></span>
 									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">인공지능</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>전남대학교, 코리아헤럴드/(주)엑셈, 코리아헤럴드</div>
-												</div>
-												<div class="txt">인공지능이란, 인간의 지능 즉, 고도의 문제해결 능력을 가진 인공적 지능을 말합니다. 컴퓨터 공학에서 이상적인 지능을 갖춘 존재, 혹은 시스템에 의해 만들어진 지능, 즉 인공적인 지능을 뜻합니다. </div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc8.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc8.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb8.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb8.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
+									</ul>
+								</div>
+
+								<div tabindex="0" role="tabpanel" aria-labelledby="process8" hidden="" class="process_9 tabs_box">
+									<span id="tap_box8" class="tap_box_ancor"></span>
+									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">드론</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
-												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc9.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc9.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb9.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb9.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
+									</ul>
+								</div>
+
+								<div tabindex="0" role="tabpanel" aria-labelledby="process8" hidden="" class="process_10 tabs_box">
+									<span id="tap_box8" class="tap_box_ancor"></span>
+									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">가상증강현실</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
-												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc10.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc10.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb10.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb10.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
+									</ul>
+								</div>
+
+								<div tabindex="0" role="tabpanel" aria-labelledby="process8" hidden="" class="process_11 tabs_box">
+									<span id="tap_box8" class="tap_box_ancor"></span>
+									<ul class="process_list2">
 										<li>
-											<div class="cnt_box">
-												<a href="javascript:;" class="subject" target="_top">대체에너지 교육</a>
-												<div class="info">
-													<div class="row"><strong>교육기관 : </strong>-</div>
-												</div>
-												<div class="txt">-</div>
-												<div class="end">해당 분야는 운영종료되었음</div>
-											</div>
-											<div class="pl_logo">
-												<span class="sound_only">대표기업: KT</span>
-												<div class="pl_img type_pc">
-													<span class="company" style="background-image:url('../../assets/images/pl_img_company_pc11.jpg');"></span>
-													<span class="devide"></span>
-													<span class="icon" style="background-image:url('../../assets/images/pl_img_icon_pc11.jpg');"></span>
-												</div>
-												<div class="pl_img type_mb">
-													<span class="company"><img src="../../assets/images/pl_img_company_mb11.jpg" alt=""></span>
-													<span class="devide"></span>
-													<span class="icon"><img src="../../assets/images/pl_img_icon_mb11.jpg" alt=""></span>
-												</div>
+											<div class="thum_title" style="background-image: url('../../assets/images/process_thum_title4.png');"><span class="sound_only">정형 빅데이터 분석 전문가</span></div>
+											<div class="cnt">
+												<a href="javascript:;" class="subject" target="_top">수학적 사고</a>
+												<span class="wt">고려사이버대학교</span>
+												<ul class="links">
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+													<li><a href="javascript:;"><span>R로 배우는 고급통계</span></a></li>
+												</ul>
 											</div>
 										</li>
 									</ul>
@@ -1167,8 +1251,8 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 					</div>
 				</div>
 
-				<div class="mc_section">
-					<h2 class="ms_title clearfix"><strong>교육강좌</strong><span class="stit">매치업의 교육강좌를 확인하세요.</span></h2>
+				<div class="mc_section main_education">
+					<h2 class="ms_title">매치업의 교육강좌를 확인하세요.</h2>
 					<div class="list_action">
 						<div class="list_sort"><!-- common.js 209 -->
 							<a href="javascript:;" class="sort_selected"><span class="sound_only">선택된 교육강좌 카테고리</span><strong>전체</strong></a>
@@ -1194,76 +1278,116 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 					<div class="cnt ms_edu">
 						<ul class="edu_list">
 							<li>
-								<a href="javascript:;" class="clearfix" target="_top">
-									<span class="thum" style="background-image:url('../../assets/images/dummy/edu_list1.jpg');"></span>
-									<span class="status status1">접수중</span>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum1.jpg');">
+										<span class="status">수강중</span>
+									</div>
 									<div class="cnt">
-										<span class="subject">스마트팜</span>
+										<span class="subject">HMG EV 이해</span>
 										<div class="info">
-											<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-											<div class="row"><strong>교육분야 : </strong>스마트팜</div>
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
 										</div>
-										<div class="info_hzt clearfix">
-											<div>필수</div>
-											<div>만족도 <span class="sound_only">별 3개</span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
 										</div>
+										<span class="btn_join">수강신청하기</span>
 									</div>
 								</a>
 							</li>
 							<li>
-								<a href="javascript:;" class="clearfix" target="_top">
-									<span class="thum" style="background-image:url('../../assets/images/dummy/edu_list2.jpg');"></span>
-									<span class="status status2">접수마감임박</span>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum2.jpg');">
+										<span class="status">수강중</span>
+									</div>
 									<div class="cnt">
-										<span class="subject">스마트팜</span>
+										<span class="subject">HMG FCEV 이해</span>
 										<div class="info">
-											<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-											<div class="row"><strong>교육분야 : </strong>스마트팜</div>
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
 										</div>
-										<div class="info_hzt clearfix">
-											<div>필수</div>
-											<div>만족도 <span class="sound_only">별 3개</span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
 										</div>
+										<span class="btn_join">수강신청하기</span>
 									</div>
 								</a>
 							</li>
 							<li>
-								<a href="javascript:;" class="clearfix" target="_top">
-									<span class="thum" style="background-image:url('../../assets/images/dummy/edu_list3.jpg');"></span>
-									<span class="status status3">준비중</span>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum3.jpg');">
+										<span class="status">수강중</span>
+									</div>
 									<div class="cnt">
-										<span class="subject">스마트팜</span>
+										<span class="subject">HMG HEV/PHEV 이해</span>
 										<div class="info">
-											<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-											<div class="row"><strong>교육분야 : </strong>스마트팜</div>
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
 										</div>
-										<div class="info_hzt clearfix">
-											<div>필수</div>
-											<div>만족도 <span class="sound_only">별 3개</span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
 										</div>
+										<span class="btn_join">수강신청하기</span>
 									</div>
 								</a>
 							</li>
 							<li>
-								<a href="javascript:;" class="clearfix" target="_top">
-									<span class="thum" style="background-image:url('../../assets/images/dummy/edu_list4.jpg');"></span>
-									<span class="status status1">접수중</span>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum4.jpg');">
+										<span class="status">수강중</span>
+									</div>
 									<div class="cnt">
-										<span class="subject">스마트팜</span>
+										<span class="subject">HMG 신에너지자동차 이해</span>
 										<div class="info">
-											<div class="row"><strong>교육기관 : </strong>연암대학교</div>
-											<div class="row"><strong>교육분야 : </strong>스마트팜</div>
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
 										</div>
-										<div class="info_hzt clearfix">
-											<div>필수</div>
-											<div>만족도 <span class="sound_only">별 3개</span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
 										</div>
+										<span class="btn_join">수강신청하기</span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum5.jpg');">
+										<span class="status">수강중</span>
+									</div>
+									<div class="cnt">
+										<span class="subject">Vuforia를 활용한 AR 콘텐츠 만들기</span>
+										<div class="info">
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
+										</div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
+										</div>
+										<span class="btn_join">수강신청하기</span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="javascript:;">
+									<div class="thum" style="background-image:url('../../assets/images/edu_list_thum6.jpg');">
+										<span class="status">수강중</span>
+									</div>
+									<div class="cnt">
+										<span class="subject">유니티 VR 프로그래밍</span>
+										<div class="info">
+											<div>교육기관 : 현대엔지비(주)</div>
+											<div>교육분야 : 신에너지자동차</div>
+										</div>
+										<div class="stars">
+											<span class="sound_only">별 3개</span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star active"></span><span class="star"></span>
+										</div>
+										<span class="btn_join">수강신청하기</span>
 									</div>
 								</a>
 							</li>
 						</ul>
 						<div class="list_more">
-							<button type="button" class="lm_btn"><span><strong>전체 </strong>강좌 더보기</span></button>
+							<a href="javascript:;" class="lm_btn"><span>전체 강좌 더보기</span></a>
 						</div>
 					</div>
 				</div>
@@ -1278,7 +1402,7 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 		<div class="ft_inner">
 			<div class="ft_left">
 				<div class="ft_logo">
-					<a href="javascript:;" title="매치업 메인화면으로 이동"><img src="../../assets/images/ft_logo.jpg" alt="매치업"></a>
+					<a href="javascript:;" title="매치업 메인화면으로 이동"><img src="../../assets/images/ft_logo.png" alt="매치업"></a>
 				</div>
 				<div class="ft_sns">
 					<ul>
@@ -1349,25 +1473,5 @@ n Technology)을 접목해 원격이나 자동으로 작물의 생육환경을 �
 <script src="../../assets/js/index.js"></script>
 
 
-<script>
-$('.rc_lst_slider').slick({
-	dots: true,
-	arrows: true,
-	autoplay: true,
-	autoplaySpeed: 5000
-});
-
-$(document).on('click', '.rc_lst_ctrl .rc_pause', function(){
-    $('.rc_lst_slider').slick('slickPause');
-	$(this).hide();
-	$('.rc_lst_ctrl .rc_play').show();
-});
-
-$(document).on('click', '.rc_lst_ctrl .rc_play', function(){
-    $('.rc_lst_slider').slick('slickPlay');
-	$(this).hide();
-	$('.rc_lst_ctrl .rc_pause').show();
-});
-</script>
 </body>
 </html>	

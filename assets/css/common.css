@@ -1,5 +1,5 @@
 @charset "utf-8";
-@import url('./nanumbarungothic.css');
+@import url('./nanumsquareneo.css');
 
 * {
   margin: 0;
@@ -13,9 +13,9 @@
 	-webkit-backface-visibility: hidden;
 	}
 html{font-size:62.5%;}
-body{font-size:1.4rem;}
+body{font-size:1.4rem;font-weight:400;}
 body, th, td, input, select, textarea, button, code, kbd, pre, samp {
-  font-family: "NanumBarunGothic", "Dotum", Arial, Tahoma, sans-serif, serif;
+  font-family: "NanumSquareNeo", "Dotum", Arial, Tahoma, sans-serif, serif;
   color: #444;
 }
 textarea:focus,
@@ -166,7 +166,7 @@ button{cursor:pointer;}
 
 .bold{font-weight:600;}
 
-.container{max-width:1232px;margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px;}
+.container{max-width:1310px;margin-left:auto;margin-right:auto;padding-left:15px;padding-right:15px;}
 .container_sm{max-width:450px;margin-left:auto;margin-right:auto;}
 .container_md{max-width:920px;margin-left:auto;margin-right:auto;}
 .container:after,.container_sm:after{clear: both;display: table;content: "";*display: block;*overflow: hidden}
