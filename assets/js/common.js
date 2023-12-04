@@ -229,6 +229,9 @@ function designScroll(){
 if ($('div').hasClass('design_scroll')) {
 	designScroll();
 }
+if ($('ul').hasClass('design_scroll')) {
+	designScroll();
+}
 if ($('tbody').hasClass('design_scroll')) {
 	designScroll();
 }
@@ -375,10 +378,11 @@ $(document).ready(function(){
 	      });
 	      dropListBtm = $dropList.outerHeight() + $dropList.offset().top;
 	      if (docHeight < dropListBtm) $dropWrap.addClass("bottom");
+
 	      $(this).attr("aria-expanded", "true");
 	      $dropList.find("[aria-selected='true']").focus()
 	    } else {
-	      $dropWrap.removeClass("active").removeClass("bottom");
+			$dropWrap.removeClass("active").removeClass("bottom");
 	      $(this).removeAttr("aria-expanded").focus();
 	      $(this).attr("aria-expanded", "false");
 	      activeDropWrap = null
