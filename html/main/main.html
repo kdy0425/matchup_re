@@ -340,7 +340,6 @@
                 if (!mypageOpenBtn.is(event.target) && !mypageLinks.is(event.target) && mypageLinks.has(event.target).length === 0) {
                     mypageLinks.fadeOut(300);
                     mypageOpenStatus = 'close';
-                    return false;
                 }
         }); 
         mypageOpenBtn.on('mousedown focusin', function () {
@@ -453,7 +452,6 @@
             allnavClose();
         });
 		function allnavClose(){
-			console.log(1)
 			allnavForm.fadeOut(300);
 			allnavCloseBtn.fadeOut(300);
 			allnavOpenBtn.fadeIn(300);
