@@ -297,6 +297,27 @@
         var navBg = $('.nav_bg');
         var isHovered = false;
 
+		//마이페이지
+		var mypageOpenStatus = 'close';
+        var mypageOpenBtn = $('.mypage_open');
+        var mypageLinks = $('.mypage_links');
+		
+		//상단검색
+		var searchOpenStatus = 'close';
+        var searchOpenBtn = $('.search_open');
+        var searchCloseBtn = $('.search_close');
+        var searchBg = $('.search_bg');
+        var searchForm = $('.search_form');
+
+		//전체메뉴
+		var allnavOpenStatus = 'close';
+        var allnavOpenBtn = $('.nav_all_open');
+        var allnavCloseBtn = $('.nav_all_close');
+        var mobileAllnavCloseBtn = $('.nav_all_innner .btn_close');
+        var allnavForm = $('.nav_all_innner');
+        var navMenu = $('.nav_form');
+
+		//상단 nav
         $('#nav, .nav_bg').on('mouseenter focusin', function (event) {
 			if (event.relatedTarget && (event.relatedTarget.closest('#nav') || event.relatedTarget.className === 'nav_bg')) {
                 return false;
@@ -332,10 +353,6 @@
         });
 
 		//마이페이지
-		var mypageOpenStatus = 'close';
-        var mypageOpenBtn = $('.mypage_open');
-        var mypageLinks = $('.mypage_links');
-
         $(document).on('mousedown focusin', function (event) {
                 if (!mypageOpenBtn.is(event.target) && !mypageLinks.is(event.target) && mypageLinks.has(event.target).length === 0) {
                     mypageLinks.fadeOut(300);
@@ -366,13 +383,9 @@
 			mypageOpenStatus = 'close'
 			return false;
 		}
-
+		
+		
 		//통합검색
-		var searchOpenStatus = 'close';
-        var searchOpenBtn = $('.search_open');
-        var searchCloseBtn = $('.search_close');
-        var searchBg = $('.search_bg');
-        var searchForm = $('.search_form');
         $(document).on('mousedown focusin', function (event) {
 			if(searchOpenStatus == 'open'){
 				if (!searchOpenBtn.is(event.target) && !searchForm.is(event.target) && searchForm.has(event.target).length === 0) {
@@ -380,6 +393,9 @@
 					searchCloseBtn.fadeOut(300);
 					searchBg.fadeOut(300);
 					header.removeClass('active');
+					mypageOpenStatus = 'close';
+					searchOpenStatus = 'close';
+					allnavOpenStatus = 'close';
 					return false;
 				}
 			}
@@ -411,12 +427,6 @@
 		}
 
 		//전체메뉴
-		var allnavOpenStatus = 'close';
-        var allnavOpenBtn = $('.nav_all_open');
-        var allnavCloseBtn = $('.nav_all_close');
-        var mobileAllnavCloseBtn = $('.nav_all_innner .btn_close');
-        var allnavForm = $('.nav_all_innner');
-        var navMenu = $('.nav_form');
         $(document).on('mousedown focusin', function (event) {
 			if(allnavOpenStatus == 'open'){
 				if (!allnavCloseBtn.is(event.target) && !allnavForm.is(event.target) && allnavForm.has(event.target).length === 0) {
@@ -425,6 +435,9 @@
 					allnavOpenBtn.fadeIn(300);
 					navMenu.fadeIn(300);
 					header.removeClass('nav_active');
+					mypageOpenStatus = 'close';
+					searchOpenStatus = 'close';
+					allnavOpenStatus = 'close';
 					return false;
 				}
 			}
