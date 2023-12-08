@@ -31,6 +31,9 @@
 .lecture_slider .item .ci div{height:64px;background-color: #F5F7F8;text-indent:-999em;overflow:hidden;background-position: center center;background-repeat: no-repeat;background-size:contain;}
 .lecture_slider .item .cate{display:flex;flex-wrap: wrap;margin-top:20px;}
 .lecture_slider .item .cate span{border:1px solid #E8E8E8;background-color: #F5F7F8;padding:8px;color:#444;font-size:13px;border-radius:4px;margin-right:5px;}
+.lecture_slider .item .preparation_msg{text-align: center;height:245px;color:#222;font-size:16px;font-weight:700;background-color: #FCFDFD;border-radius:10px;padding:23px 10px;display:flex;align-items: center;justify-content: center;flex-direction: column;}
+.lecture_slider .item .preparation_msg:before{content:"";display:block;margin-bottom:20px;width:100%;height:42px;background-position: center center;background-repeat: no-repeat;background-size: contain;background-image: url("../images/preparation_msg.png");}
+.lecture_slider .item .preparation_msg strong{color:#2F87EF;}
 .lecture_slide_ctrl{display: flex;justify-content: center;}
 .lecture_slide_ctrl .nav_arrow{width:24px;height:24px;text-indent: -999em;overflow: hidden;background-position: center center;background-repeat: no-repeat;background-color: transparent;border:0;}
 .lecture_slide_ctrl .nav_arrow.nav_banner_prev{background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='mask0_1_1341' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='0' y='0' width='24' height='24'%3E%3Crect width='24' height='24' fill='%23D9D9D9'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_1_1341)'%3E%3Cpath d='M10.4539 12L14.5269 16.0731C14.6654 16.2116 14.7362 16.3856 14.7394 16.5952C14.7427 16.8048 14.6718 16.9821 14.5269 17.1269C14.3821 17.2718 14.2064 17.3443 14 17.3443C13.7936 17.3443 13.618 17.2718 13.4731 17.1269L8.97892 12.6327C8.88532 12.5391 8.81929 12.4404 8.78084 12.3366C8.74238 12.2327 8.72314 12.1205 8.72314 12C8.72314 11.8795 8.74238 11.7673 8.78084 11.6635C8.81929 11.5597 8.88532 11.4609 8.97892 11.3674L13.4731 6.87313C13.6116 6.73466 13.7856 6.66383 13.9952 6.66063C14.2048 6.65741 14.3821 6.72824 14.5269 6.87313C14.6718 7.01799 14.7443 7.19363 14.7443 7.40003C14.7443 7.60643 14.6718 7.78206 14.5269 7.92693L10.4539 12Z' fill='%23444444'/%3E%3C/g%3E%3C/svg%3E%0A");}
@@ -175,6 +178,9 @@
     .lecture_slider .item .ci{padding:0 5px;margin-top:12px;}
     .lecture_slider .item .cate{margin-top:12px;}
     .lecture_slider .item .cate span{padding:6px 8px;font-size:11px;}
+    .lecture_slider .item .preparation_msg{height:122px;font-size:13px;}
+    .lecture_slider .item .preparation_msg:before{margin-bottom:14px;}
+
     .lecture_slide_ctrl{position:absolute;right:20px;top:28px;}
     .lecture_slide_ctrl .nav_arrow{width:20px;height:14px;}
     .lecture_slide_ctrl .nav_arrow.nav_banner_prev{}
