@@ -214,11 +214,11 @@
     .process_list1 .top .cnt .subject{font-size:16px;}
     .process_list1 .top .cnt .wt{margin-top:8px;font-size:11px;}
     .process_list1 .top .cnt .wt span + span{margin-top:5px;}
-    .process_list1 .bottom{margin-top:15px;height: auto;}
+    .process_list1 .bottom{padding-top:15px;height: auto;}
     .process_list1 .bottom .ci{margin-top:15px;}
     .process_list1 .bottom .txt{opacity:1;position:relative;top:0;transform: translate(0,0);font-size:12px;}
     .process_list1 > li a:hover{border:2px solid #2F87EF;padding:19px;}
-    .process_list1 > li a:hover .ci div{opacity:1;}
+    .process_list1 > li a:hover .ci{opacity:1;}
 
     .process_list2{}
     .process_list2 > li{width:calc(50% - 10px);margin-right:20px;min-height: 0;}
