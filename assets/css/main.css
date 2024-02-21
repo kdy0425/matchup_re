@@ -233,7 +233,7 @@
     .main_education{}
     .main_education .list_action{top:-9px;}
     .main_education .list_sort{position:relative;}
-    .main_education .list_sort .sort_selected{width:100%;display:block;border:1px solid #e8e8e8;}
+    .main_education .list_sort .sort_selected{width:100%;display:block;border:1px solid #e8e8e8;padding-left:12px;}
     .list_action .sort_list .cnt{max-height:231px;}
 
     .ms_edu{}

@@ -55,7 +55,7 @@ input::placeholder{
 /*교육강좌*/
 .mc_section .list_action{position:absolute;right:0;top:2px;}
 .list_action .list_sort{position:relative;}
-.list_action .list_sort .sort_selected{color:#333;font-size:1.9rem;height:24px;line-height:24px;display:inline-block;padding-right:38px;background-repeat:no-repeat;background-position:right 4px center;background-image:url('../images/sort_arrow.jpg');}
+.list_action .list_sort .sort_selected{color:#333;font-size:1.9rem;height:24px;line-height:24px;display:inline-block;padding-right:38px;background-repeat:no-repeat;background-position:right 4px center;}
 .list_action .sort_list{max-height:351px;width:182px;top:41px;}
 .list_action .sort_list .cnt{max-height:351px;}
 
@@ -111,7 +111,7 @@ div .star-rating .yStar{background-position:left bottom; line-height:0; vertical
 }
 @media (max-width: 1249px) {
 	.mc_section .list_action{top:2px;}
-	.list_action .list_sort .sort_selected{font-size:1.6rem;height:28px;line-height:28px;padding-right:20px;background-position:right center;background-image:url('../images/icon_s_arrow_down.png');background-size:10px;}
+	.list_action .list_sort .sort_selected{font-size:1.6rem;height:28px;line-height:28px;padding-right:20px;background-position:right center;background-size:10px;}
 	.list_action .sort_list{top:38px;width:150px;max-height:241px;}
 	.list_action .sort_list .cnt{max-height:241px;}
 	.list_action .sort_list ul li a{padding:12px;color:#333;font-size:1.4rem;}
